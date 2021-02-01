@@ -1,7 +1,7 @@
 import IconButton from '../IconButton';
 import { useSelector, useDispatch } from 'react-redux';
-import * as phonebookOperations from '../../redux/phonebook-operations';
-import { getVisibleContacts } from '../../redux/phonebook-selectors';
+import * as phonebookOperations from '../../redux/phonebook/phonebook-operations';
+import { getVisibleContacts } from '../../redux/phonebook/phonebook-selectors';
 import { ReactComponent as DeleteIcon } from '../../icons/delete.svg';
 
 import s from './ContactList.module.css';

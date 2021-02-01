@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getContacts } from '../../redux/phonebook-selectors';
-import * as phonebookOperations from '../../redux/phonebook-operations';
+import { getContacts } from '../../redux/phonebook/phonebook-selectors';
+import * as phonebookOperations from '../../redux/phonebook/phonebook-operations';
 import s from './ContactForm.module.css';
 
 export default function ContactForm() {

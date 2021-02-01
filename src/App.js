@@ -1,33 +1,74 @@
-// import { connect } from 'react-redux';
+import { lazy, Suspense, useEffect } from 'react';
+import { Switch, Route } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-import ContactForm from './components/ContactForm';
-import Filter from './components/Filter';
-import ContactList from './components/ContactList';
-import Section from './components/Section';
+import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
 
-export default function App() {
+import { ToastContainer } from 'react-toastify';
+
+import Container from './components/Container';
+import AppBar from './components/AppBar';
+import Loader from './components/Loader';
+
+import { authOperations } from './redux/auth';
+
+const HomeView = lazy(() =>
+  import('./views/HomeView' /* webpackChunkName: "home-view" */),
+);
+
+const RegisterView = lazy(() =>
+  import('./views/RegisterView' /* webpackChunkName: "register-view" */),
+);
+const LoginView = lazy(() =>
+  import('./views/LoginView' /* webpackChunkName: "login-view" */),
+);
+const ContactsView = lazy(() =>
+  import('./views/ContactsView' /* webpackChunkName: "contacts-view" */),
+);
+
+const NotFoundView = lazy(() =>
+  import('./views/NotFoundView' /* webpackChunkName: "not-found-view" */),
+);
+
+function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(authOperations.getCurrentUser());
+  }, [dispatch]);
+
   return (
-    <div>
-      <Section title="Phonebook">
-        <ContactForm />
-      </Section>
+    <Container>
+      <AppBar />
 
-      <Section title="Contacts">
-        <Filter />
-        <ContactList />
-      </Section>
-    </div>
+      <Suspense fallback={<Loader />}>
+        <Switch>
+          <PublicRoute path="/" exact>
+            <HomeView />
+          </PublicRoute>
+
+          <PublicRoute path="/register" restricted redirectTo="/contacts">
+            <RegisterView />
+          </PublicRoute>
+
+          <PublicRoute path="/login" restricted redirectTo="/contacts">
+            <LoginView />
+          </PublicRoute>
+
+          <PrivateRoute path="/contacts" redirectTo="/login">
+            <ContactsView />
+          </PrivateRoute>
+
+          <Route>
+            <NotFoundView />
+          </Route>
+        </Switch>
+      </Suspense>
+
+      <ToastContainer autoClose={3000} position="top-center" />
+    </Container>
   );
 }
 
-// ______________________
-// const mapStateToProps = state => ({
-//   contacts: state.contacts.items,
-// });
-
-// const mapDispatchToProps = dispatch => ({
-//   onFirstRender: parsedContacts =>
-//     dispatch(phonebookActions.overwriteContacts(parsedContacts)),
-// });
-
-// export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
