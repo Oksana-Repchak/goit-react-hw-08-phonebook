@@ -4,7 +4,7 @@ import { authSelectors } from '../../redux/auth';
 import s from './Navigation.module.css';
 
 function Navigation() {
-  const isLoggedIn = useSelector(authSelectors.getIsAuthenticated);
+  const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
   return (
     <nav>
       <NavLink to="/" exact className={s.link} activeClassName={s.activeLink}>

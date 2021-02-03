@@ -1,6 +1,6 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { Switch, Route } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { Switch } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
@@ -9,40 +9,49 @@ import { ToastContainer } from 'react-toastify';
 
 import Container from './components/Container';
 import AppBar from './components/AppBar';
-import Loader from './components/Loader';
+
+import HomeView from './views/HomeView';
+import RegisterView from './views/RegisterView';
+import LoginView from './views/LoginView';
+import ContactsView from './views/ContactsView';
 
 import { authOperations } from './redux/auth';
+import authSelectors from './redux/auth/auth-selectors';
 
-const HomeView = lazy(() =>
-  import('./views/HomeView' /* webpackChunkName: "home-view" */),
-);
+// const HomeView = lazy(() =>
+//   import('./views/HomeView' /* webpackChunkName: "home-view" */),
+// );
 
-const RegisterView = lazy(() =>
-  import('./views/RegisterView' /* webpackChunkName: "register-view" */),
-);
-const LoginView = lazy(() =>
-  import('./views/LoginView' /* webpackChunkName: "login-view" */),
-);
-const ContactsView = lazy(() =>
-  import('./views/ContactsView' /* webpackChunkName: "contacts-view" */),
-);
+// const RegisterView = lazy(() =>
+//   import('./views/RegisterView' /* webpackChunkName: "register-view" */),
+// );
+// const LoginView = lazy(() =>
+//   import('./views/LoginView' /* webpackChunkName: "login-view" */),
+// );
+// const ContactsView = lazy(() =>
+//   import('./views/ContactsView' /* webpackChunkName: "contacts-view" */),
+// );
 
-const NotFoundView = lazy(() =>
-  import('./views/NotFoundView' /* webpackChunkName: "not-found-view" */),
-);
+// const NotFoundView = lazy(() =>
+//   import('./views/NotFoundView' /* webpackChunkName: "not-found-view" */),
+// );
 
 function App() {
+  const isFetchingCurrentUser = useSelector(
+    authSelectors.getIsFetchingCurrentUser,
+  );
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(authOperations.getCurrentUser());
+    dispatch(authOperations.fetchCurrentUser());
   }, [dispatch]);
 
   return (
-    <Container>
-      <AppBar />
+    !isFetchingCurrentUser && (
+      <Container>
+        <AppBar />
 
-      <Suspense fallback={<Loader />}>
         <Switch>
           <PublicRoute path="/" exact>
             <HomeView />
@@ -59,15 +68,11 @@ function App() {
           <PrivateRoute path="/contacts" redirectTo="/login">
             <ContactsView />
           </PrivateRoute>
-
-          <Route>
-            <NotFoundView />
-          </Route>
         </Switch>
-      </Suspense>
 
-      <ToastContainer autoClose={3000} position="top-center" />
-    </Container>
+        <ToastContainer autoClose={3000} position="top-center" />
+      </Container>
+    )
   );
 }
 
