@@ -11,28 +11,15 @@ import {
   fetchContactsError,
 } from './phonebook-actions';
 
-axios.defaults.baseURL = 'http://localhost:3000';
-
 export const fetchContacts = () => async dispatch => {
   dispatch(fetchContactsRequest());
-
   try {
     const { data } = await axios.get('/contacts');
-
     dispatch(fetchContactsSuccess(data));
   } catch (error) {
     dispatch(fetchContactsError(error));
   }
 };
-
-// export const fetchContacts = () => dispatch => {
-//   dispatch(fetchContactsRequest());
-
-//   axios
-//     .get('/contacts')
-//     .then(({ data }) => dispatch(fetchContactsSuccess(data)))
-//     .catch(error => dispatch(fetchContactsError(error)));
-// };
 
 export const addContact = (name, number) => dispatch => {
   const contact = {
